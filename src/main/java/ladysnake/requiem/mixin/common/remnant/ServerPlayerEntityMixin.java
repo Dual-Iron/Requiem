@@ -48,7 +48,6 @@ import net.minecraft.advancement.PlayerAdvancementTracker;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -67,10 +66,6 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Re
     @Shadow
     public abstract PlayerAdvancementTracker getAdvancementTracker();
 
-    @Override
-    @Shadow
-    public abstract ServerWorld getWorld();
-
     @Inject(method = "playerTick", at = @At("HEAD"), cancellable = true)
     private void stopTicking(CallbackInfo ci) {
         if (DeathSuspender.get(this).isLifeTransient()) {
@@ -81,7 +76,8 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Re
     @Inject(method = "onDeath", at = @At("HEAD"), cancellable = true)
     private void suspendDeath(DamageSource killingBlow, CallbackInfo ci) {
         Identifier advancementId = Requiem.id("adventure/the_choice");
-        Advancement theChoice = this.getWorld().getServer().getAdvancementLoader().get(advancementId);
+        Advancement theChoice = ((ServerPlayerEntity) (Object) this).getWorld().getServer().getAdvancementLoader()
+                .get(advancementId);
         AdvancementProgress progress = this.getAdvancementTracker().getProgress(theChoice);
         if (progress == null) {
             Requiem.LOGGER.error("Advancement '{}' is missing", advancementId);
