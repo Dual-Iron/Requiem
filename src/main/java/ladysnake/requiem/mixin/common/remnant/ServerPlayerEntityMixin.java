@@ -33,7 +33,7 @@
  * this exception also makes it possible to release a modified version which carries forward this exception.
  */
 package ladysnake.requiem.mixin.common.remnant;
-
+ 
 import com.mojang.authlib.GameProfile;
 import ladysnake.requiem.Requiem;
 import ladysnake.requiem.api.v1.RequiemPlayer;
